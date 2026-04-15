@@ -1,20 +1,26 @@
-# ตั้งค่าภาษาให้รองรับภาษาไทย
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+# ปรับแต่งหน้าต่าง Console
+$Host.UI.RawUI.WindowTitle = "License Verification System"
+Clear-Host
 
-Write-Host "================================" -ForegroundColor Cyan
-Write-Host "    CHASERS SYSTEM STARTING     " -ForegroundColor White
-Write-Host "================================" -ForegroundColor Cyan
+# แสดงข้อความ License Key : (เลียนแบบในรูป)
+Write-Host ""
+$userKey = Read-Host "License Key "
 
-# บรรทัดนี้คือคำสั่งเปิดโปรแกรม _Loader.exe ในเครื่อง
-# โดยสมมติว่าไฟล์อยู่ในโฟลเดอร์เดียวกับที่รัน หรืออยู่ใน Downloads
-$loaderPath = "$env:USERPROFILE\Downloads\Chaser\_Loader.exe"
+# --- ส่วนตรวจสอบ Key ---
+# คุณสามารถเปลี่ยน "MY-KEY-2026" เป็น Key ที่คุณต้องการ
+$validKey = "MY-KEY-2026" 
 
-if (Test-Path $loaderPath) {
-    Write-Host "Starting _Loader.exe..." -ForegroundColor Green
-    Start-Process $loaderPath
-} else {
-    Write-Host "Error: _Loader.exe not found at $loaderPath" -ForegroundColor Red
+if ($userKey -eq $validKey) {
+    Write-Host "`n[+] Access Granted! Loading..." -ForegroundColor Green
+    Start-Sleep -Seconds 1
+    
+    # --- ใส่โค้ดโปรแกรมของคุณต่อจากตรงนี้ ---
+    Write-Host "ยินดีต้อนรับเข้าสู่ระบบ..." -ForegroundColor Cyan
+    # ตัวอย่าง: เรียกเปิด Notepad
+    # notepad.exe 
 }
-
-Write-Host "Successfully Connected to Server!" -ForegroundColor Green
-Write-Host "--------------------------------" -ForegroundColor Gray
+else {
+    Write-Host "`n[!] Invalid Key. Access Denied." -ForegroundColor Red
+    Start-Sleep -Seconds 2
+    exit
+}
