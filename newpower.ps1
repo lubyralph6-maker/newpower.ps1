@@ -1,38 +1,23 @@
-# 1. ปิดการแสดงผล Error และล้างหน้าจอทันทีที่รัน
+# 1. ปิดการแจ้งเตือนและล้างหน้าจอ
 $ErrorActionPreference = "SilentlyContinue"
 Clear-Host
 
-# 2. ปรับขนาดหน้าต่าง PowerShell ให้ดูเหมือนหน้า Loader (เลือกขนาดตามชอบ)
-$pshost = Get-Host
-$pswindow = $pshost.UI.RawUI
-$newsize = $pswindow.BufferSize
-$newsize.Width = 60
-$newsize.Height = 20
-$pswindow.BufferSize = $newsize
-$newsize = $pswindow.WindowSize
-$newsize.Width = 60
-$newsize.Height = 20
-$pswindow.WindowSize = $newsize
+# 2. ตั้งค่าที่อยู่ไฟล์ที่จะโหลด (เปลี่ยนลิงก์ด้านล่างเป็นลิงก์ไฟล์โปรแกรม .exe ของคุณ)
+$url = "https://your-website.com/path/to/your_Loader.exe"
+$destination = "$env:TEMP\my_loader.exe"
 
-# 3. แสดงผลหน้าจอ Loader (เลียนแบบรูปที่คุณส่งมาเป๊ะๆ)
-Write-Host ""
-# รับค่า License Key โดยตรง
-$userKey = Read-Host "License Key "
+# 3. แสดงข้อความสถานะเล็กน้อย (หรือจะไม่แสดงเลยก็ได้)
+Write-Host "Loading System..." -ForegroundColor Cyan
 
-# 4. ส่วนเช็ค Key (เปลี่ยน "1234" เป็น Key ของคุณ)
-$secretKey = "1234" 
+# 4. ทำการดาวน์โหลดไฟล์โปรแกรมหลักมาไว้ในเครื่อง (โฟลเดอร์ Temp)
+Invoke-WebRequest -Uri $url -OutFile $destination
 
-if ($userKey -eq $secretKey) {
-    Write-Host "`n[+] Success! Connecting to server..." -ForegroundColor Green
-    Start-Sleep -Seconds 1
-    
-    # --- ใส่คำสั่งที่คุณต้องการให้รันต่อด้านล่างนี้ ---
-    Write-Host "Welcome, User." -ForegroundColor Cyan
-    # ตัวอย่าง: เรียกเปิด CMD หรือ โปรแกรมอื่น
-    # & cmd.exe
-}
-else {
-    Write-Host "`n[!] Invalid License Key." -ForegroundColor Red
-    Start-Sleep -Seconds 2
+# 5. สั่งเปิดโปรแกรมที่โหลดมาทันที
+if (Test-Path $destination) {
+    Start-Process -FilePath $destination
+    # ปิดหน้า PowerShell ทันทีหลังจากเปิดโปรแกรมแล้ว
     exit
+} else {
+    Write-Host "Error: Cannot load system." -ForegroundColor Red
+    Pause
 }
