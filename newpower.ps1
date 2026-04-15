@@ -1,42 +1,38 @@
-# 1. ตั้งค่าหน้าจอ Console ให้ดูเหมือนโปรแกรม Loader
-$Host.UI.RawUI.WindowTitle = "System Loader v1.0"
+# 1. ปิดการแสดงผล Error และล้างหน้าจอทันทีที่รัน
+$ErrorActionPreference = "SilentlyContinue"
 Clear-Host
 
-# 2. แสดงหน้าตา Interface (เลียนแบบรูปที่คุณส่งมา)
+# 2. ปรับขนาดหน้าต่าง PowerShell ให้ดูเหมือนหน้า Loader (เลือกขนาดตามชอบ)
+$pshost = Get-Host
+$pswindow = $pshost.UI.RawUI
+$newsize = $pswindow.BufferSize
+$newsize.Width = 60
+$newsize.Height = 20
+$pswindow.BufferSize = $newsize
+$newsize = $pswindow.WindowSize
+$newsize.Width = 60
+$newsize.Height = 20
+$pswindow.WindowSize = $newsize
+
+# 3. แสดงผลหน้าจอ Loader (เลียนแบบรูปที่คุณส่งมาเป๊ะๆ)
 Write-Host ""
-Write-Host "====================================" -ForegroundColor Cyan
-Write-Host "          AUTHORIZATION             " -ForegroundColor White
-Write-Host "====================================" -ForegroundColor Cyan
-Write-Host ""
+# รับค่า License Key โดยตรง
+$userKey = Read-Host "License Key "
 
-# 3. จุดที่รอรับค่า Key จากผู้ใช้
-# ตัวแปร $inputKey จะเก็บค่าที่พิมพ์ในหน้าจอ
-$inputKey = Read-Host "License Key "
+# 4. ส่วนเช็ค Key (เปลี่ยน "1234" เป็น Key ของคุณ)
+$secretKey = "1234" 
 
-# 4. ดึง Key ที่ถูกต้องจากไฟล์ออนไลน์ (สมมติว่าคุณสร้างไฟล์ keys.txt ไว้ใน GitHub)
-# หรือจะกำหนดตายตัวในนี้ก็ได้ เช่น $serverKey = "MY-SECRET-KEY"
-try {
-    # แนะนำให้สร้างไฟล์ .txt อีกลิ้งค์นึงเพื่อเก็บ Key
-    $serverKey = (iwr "https://raw.githubusercontent.com/lubyralph6-maker/newpower.ps1/main/key_database.txt").Content.Trim()
-}
-catch {
-    Write-Host "`n[!] Connection Error: Cannot connect to license server." -ForegroundColor Yellow
-    Pause
-    exit
-}
-
-# 5. ตรวจสอบเงื่อนไข
-if ($inputKey -eq $serverKey) {
-    Write-Host "`n[+] Success: Access Granted!" -ForegroundColor Green
-    Write-Host "[+] Starting system..." -ForegroundColor Gray
+if ($userKey -eq $secretKey) {
+    Write-Host "`n[+] Success! Connecting to server..." -ForegroundColor Green
     Start-Sleep -Seconds 1
     
-    # --- ใส่โค้ดโปรแกรมที่คุณต้องการให้รันหลังผ่าน Key ตรงนี้ ---
-    # เช่น: write-host "Hello, User!"
+    # --- ใส่คำสั่งที่คุณต้องการให้รันต่อด้านล่างนี้ ---
+    Write-Host "Welcome, User." -ForegroundColor Cyan
+    # ตัวอย่าง: เรียกเปิด CMD หรือ โปรแกรมอื่น
+    # & cmd.exe
 }
 else {
-    Write-Host "`n[!] Error: Invalid License Key." -ForegroundColor Red
-    Write-Host "[!] Access Denied." -ForegroundColor Red
-    Start-Sleep -Seconds 3
+    Write-Host "`n[!] Invalid License Key." -ForegroundColor Red
+    Start-Sleep -Seconds 2
     exit
 }
