@@ -1,22 +1,20 @@
-# --- ไฟล์ newpower.ps1 บน GitHub ---
-
-# ตั้งค่าให้ PowerShell อ่านภาษาไทย/UTF-8 ออก (ป้องกันเครื่องหมายคำถาม ?????)
+# ตั้งค่าภาษาให้รองรับภาษาไทย
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# แสดงข้อความเท่ๆ ตอนเริ่มทำงาน
 Write-Host "================================" -ForegroundColor Cyan
-Write-Host "    CHASERS INTERNAL SYSTEM    " -ForegroundColor White
+Write-Host "    CHASERS SYSTEM STARTING     " -ForegroundColor White
 Write-Host "================================" -ForegroundColor Cyan
-Write-Host "Connecting to Server..." -ForegroundColor Yellow
 
-# จำลองการทำงาน (คุณสามารถเปลี่ยนเป็นคำสั่งรันโปรแกรมของคุณได้)
-Start-Sleep -Seconds 2
-Write-Host "Status: Online" -ForegroundColor Green
-Write-Host "Successfully Connected!" -ForegroundColor Green
+# บรรทัดนี้คือคำสั่งเปิดโปรแกรม _Loader.exe ในเครื่อง
+# โดยสมมติว่าไฟล์อยู่ในโฟลเดอร์เดียวกับที่รัน หรืออยู่ใน Downloads
+$loaderPath = "$env:USERPROFILE\Downloads\Chaser\_Loader.exe"
+
+if (Test-Path $loaderPath) {
+    Write-Host "Starting _Loader.exe..." -ForegroundColor Green
+    Start-Process $loaderPath
+} else {
+    Write-Host "Error: _Loader.exe not found at $loaderPath" -ForegroundColor Red
+}
+
+Write-Host "Successfully Connected to Server!" -ForegroundColor Green
 Write-Host "--------------------------------" -ForegroundColor Gray
-
-# ตัวอย่างคำสั่งเปิดโปรแกรม (ถ้ามีไฟล์ในเครื่อง)
-# Start-Process "C:\Path\To\Your\Program.exe"
-
-# บรรทัดสุดท้ายเพื่อให้หน้าต่างค้างไว้ดูสถานะ (ถ้าต้องการ)
-Read-Host "Press Enter to continue..."
