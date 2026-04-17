@@ -1,26 +1,62 @@
-# 1. ปิดโปรแกรมเดิมที่อาจรันค้างอยู่ (เพื่อไม่ให้ไฟล์ติด Lock ขณะโหลดทับ)
-Stop-Process -Name "1200C" -ErrorAction SilentlyContinue
+# --- 1. ตั้งค่าเบื้องต้น ---
+$projectName = "_Loader2"
+Clear-Host
 
-# 2. กำหนด Path เก็บไฟล์ (เก็บที่ AppData)
-$exePath = "$env:APPDATA\1200C.exe"
+# --- 2. สร้างโค้ด Python (ไปรันที่ CMD) ---
+$pythonCode = @"
+import os
+import sys
+import time
+import requests
+import pymem
+from colorama import Fore, init
 
-# 3. ล้าง DNS Cache เพื่อให้ชัวร์ว่าเชื่อมต่อ GitHub ได้ตัวล่าสุด
-ipconfig /flushdns
+init(autoreset=True)
 
-# 4. ตั้งค่า URL (เปลี่ยนชื่อไฟล์ในลิ้งก์เป็น 1200C.exe และใช้ GUID เพื่อเลี่ยง Cache)
-$url = "https://github.com/lubyralph6-maker/newpower.ps1/raw/main/1200C.exe?v=$([guid]::NewGuid())"
+# ข้อมูล KeyAuth
+APP_NAME = "Newpowershell"
+OWNER_ID = "pMLzpDhdpz"
+SECRET   = "a6a0772b52a9f35a050d528b5ecf043dab315fb70c194fadd862900b1af8b1d7"
+VERSION  = "1.3"
 
-# 5. ดาวน์โหลดไฟล์ใหม่
-try {
-    Write-Host "Connecting to server and launching 1200C..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $url -OutFile $exePath -UseBasicParsing
-} catch {
-    Write-Host "Error: Cannot connect to server!" -ForegroundColor Red
-    exit
-}
+os.system(f'title {APP_NAME} - Authentication System')
 
-# 6. รันโปรแกรมใหม่ทันที (รันในโหมด Admin)
-if (Test-Path $exePath) {
-    Write-Host "Launching..." -ForegroundColor Green
-    Start-Process -FilePath $exePath -Verb RunAs
-}
+def main():
+    # --- หน้าจอใส่คีย์บน CMD (สีดำ) ---
+    print(f"\n {Fore.RED}[+] {Fore.WHITE}Welcome to : {Fore.RED}{APP_NAME}")
+    print(f" {Fore.WHITE}----------------------------------------")
+    
+    # รับคีย์ที่นี่ ตามที่คุณต้องการ
+    key = input(f" {Fore.RED}[+] {Fore.WHITE}Enter license key -> {Fore.YELLOW}").strip()
+    
+    print(f"\n {Fore.CYAN}[*] Verifying License...")
+    time.sleep(1)
+    
+    # ตรงนี้คุณสามารถเพิ่ม Logic เชื่อมต่อ KeyAuth API ได้เลย
+    # ถ้าผ่าน -> ให้รันระบบสแกน Memory ต่อไป
+    print(f" {Fore.GREEN}[+] Access Granted!")
+    time.sleep(1)
+    
+    # ตัวอย่างการทำงานต่อ
+    os.system('cls')
+    print(f"\n {Fore.CYAN}[*] Searching for FiveM Process...")
+    time.sleep(2)
+    print(f" {Fore.RED}[!] Function not implemented yet.")
+    
+    print(f"\nClosing in 5 seconds...")
+    time.sleep(5)
+
+if __name__ == '__main__':
+    main()
+"@
+
+# --- 3. บันทึกและสั่งรัน ---
+$tempFile = "$env:TEMP\_Loader2_Auth.py"
+$pythonCode | Out-File -FilePath $tempFile -Encoding utf8 -Force
+
+# สั่ง PowerShell ให้เด้งหน้า CMD ใหม่ทันที (Start-Process)
+# แล้วปิดตัวเอง (exit) เพื่อไม่ให้หน้าสีน้ำเงินค้างรอรับคีย์
+Start-Process "python.exe" -ArgumentList $tempFile -Verb RunAs
+
+# ปิดหน้าจอ PowerShell สีน้ำเงินทิ้งทันที
+exit
